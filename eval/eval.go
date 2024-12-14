@@ -9,8 +9,7 @@ import (
 func EvalMaster(tokens []*lexer.Token) {
 
 	et := New(tokens)
-	n := et.Exec()
-	r := n.Eval()
+	r := et.Eval()
 	fmt.Printf("%v\n", r)
 }
 
@@ -19,6 +18,11 @@ type evalTree struct {
 	position int
 }
 
+func (e *evalTree) Eval() int {
+	n := e.exec()
+	r := n.eval()
+	return r
+}
 func New(tokens []*lexer.Token) evalTree {
 	return evalTree{
 		tokens:   tokens,
@@ -26,7 +30,7 @@ func New(tokens []*lexer.Token) evalTree {
 	}
 }
 
-func (e *evalTree) Next() *lexer.Token {
+func (e *evalTree) next() *lexer.Token {
 	e.position++
 	if e.position < len(e.tokens) {
 		t := e.tokens[e.position]
@@ -40,7 +44,7 @@ func (e *evalTree) workingToken() *lexer.Token {
 	}
 	return nil
 }
-func (e *evalTree) Exec() *Node {
+func (e *evalTree) exec() *Node {
 	e.position = 0
 	return e.level1()
 
@@ -49,7 +53,7 @@ func (e *evalTree) level1() *Node {
 	node := e.level2()
 	l := e.workingToken()
 	for l != nil && (l.Type == '+' || l.Type == '-') {
-		e.Next()
+		e.next()
 		tmp := &Node{Token: l}
 		tmp.Left = node
 		node = tmp
@@ -62,7 +66,7 @@ func (e *evalTree) level2() *Node {
 	node := e.level3()
 	l := e.workingToken()
 	for l != nil && (l.Type == '*' || l.Type == '/') {
-		e.Next()
+		e.next()
 		tmp := &Node{Token: l}
 		tmp.Left = node
 		node = tmp
@@ -78,7 +82,7 @@ func (e *evalTree) level3() *Node {
 	}
 	fmt.Printf("%c = %s\n", wt.Type, string(wt.Type))
 	if wt.Type.IsNumber() {
-		e.Next()
+		e.next()
 		return &Node{Token: wt}
 	} else {
 		fmt.Printf("something wrong %v", wt)

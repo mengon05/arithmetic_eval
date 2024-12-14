@@ -8,18 +8,18 @@ type Node struct {
 	Right *Node
 }
 
-func (n *Node) Eval() int {
+func (n *Node) eval() int {
 	a := 0
 	b := 0
 	if n.Right == nil {
 		return n.Token.Value
 	} else {
-		b = n.Right.Eval()
+		b = n.Right.eval()
 	}
 	if n.Left == nil {
 		a = n.Token.Value
 	} else {
-		a = n.Left.Eval()
+		a = n.Left.eval()
 	}
 	if fn, ok := opMap[n.Token.Type]; ok {
 		return fn(a, b)

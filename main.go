@@ -8,12 +8,10 @@ import (
 )
 
 func main() {
-
+	exp := "8*2"
 	lex := lexer.New()
-	tokens := lex.Tokenize("8/2")
-	// tokens := lex.Tokenize("69*(4/2)+3*1")
-	for _, t := range tokens {
-		fmt.Printf("%v\n", t)
-	}
-	eval.EvalMaster(tokens)
+	tokens := lex.Tokenize(exp)
+	evaluator := eval.New(tokens)
+	r := evaluator.Eval()
+	fmt.Printf("%s = %d", exp, r)
 }
