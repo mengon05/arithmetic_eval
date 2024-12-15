@@ -42,6 +42,7 @@ func TestEval_invalid_expresions(t *testing.T) {
 	assertError(t, "1+b", "unexpected character b")
 	assertError(t, "1/0", "invalid operation: 1 divided by 0")
 	assertError(t, "100/(3-3)", "invalid operation: 100 divided by 0")
+	assertError(t, "*1", "unexpected character *")
 }
 
 func TestEval_parentesis_error(t *testing.T) {
