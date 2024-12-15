@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	exp := "8*2"
+	exp := "1*((1+2)*(2+3))"
 	lex := lexer.New()
 	tokens := lex.Tokenize(exp)
 	evaluator := eval.New(tokens)

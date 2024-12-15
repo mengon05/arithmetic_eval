@@ -49,6 +49,8 @@ func (e *evalTree) exec() *Node {
 	return e.level1()
 
 }
+
+// plus and minus
 func (e *evalTree) level1() *Node {
 	node := e.level2()
 	l := e.workingToken()
@@ -62,6 +64,8 @@ func (e *evalTree) level1() *Node {
 	}
 	return node
 }
+
+// mult and div
 func (e *evalTree) level2() *Node {
 	node := e.level3()
 	l := e.workingToken()
@@ -80,10 +84,19 @@ func (e *evalTree) level3() *Node {
 	if wt == nil {
 		return nil
 	}
-	fmt.Printf("%c = %s\n", wt.Type, string(wt.Type))
+	fmt.Printf("%c = %s :: val %d\n", wt.Type, string(wt.Type), wt.Value)
 	if wt.Type.IsNumber() {
 		e.next()
 		return &Node{Token: wt}
+	} else if wt.Type == lexer.TokenTypes.LParentesis {
+		e.next()
+		l1 := e.level1()
+		n := e.workingToken()
+		if n.Type != lexer.TokenTypes.RParentesis {
+			panic(fmt.Sprintf("missing right parentesis, found %c", n.Type))
+		}
+		e.next()
+		return l1
 	} else {
 		fmt.Printf("something wrong %v", wt)
 	}
