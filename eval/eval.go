@@ -17,8 +17,8 @@ func (e *evalTree) Eval() (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	r := n.eval()
-	return r, nil
+	r, err := n.eval()
+	return r, err
 }
 func New(tokens []*lexer.Token) evalTree {
 	return evalTree{
