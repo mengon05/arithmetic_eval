@@ -33,6 +33,9 @@ func TestEval_goodcases(t *testing.T) {
 	assertExpresion(t, "2*(3*5)", 30)
 	assertExpresion(t, "((1+1)*((1+2)*(2+3)))", 30)
 	assertExpresion(t, "((1+1)*((1+2)*(2+3)))/10", 3)
+	assertExpresion(t, "-11", -11)
+	assertExpresion(t, "-11+5", -6)
+	assertExpresion(t, "-11-5", -16)
 }
 func TestEval_invalid_expresions(t *testing.T) {
 	assertError(t, "a+b", "unexpected character a")

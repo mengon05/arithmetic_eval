@@ -13,7 +13,9 @@ type Token struct {
 func (lt *Token) AddDigit(digit int) {
 
 	r := lt.Value * 10
+
 	lt.Value = r + digit
+
 	lt.digits++
 }
 func newTokenWithValue(t TokenType, val int) *Token {

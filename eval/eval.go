@@ -115,6 +115,13 @@ func (e *evalTree) level3() (*Node, error) {
 		e.rparam--
 		e.next()
 		return l1, nil
+	} else if wt.Type == lexer.TokenTypes.Minus {
+		n := e.next()
+		if n != nil {
+			n.Value *= -1
+			e.next()
+		}
+		return &Node{Token: n}, nil
 	} else {
 		return nil, fmt.Errorf("unexpected character %c", wt.Type)
 	}
