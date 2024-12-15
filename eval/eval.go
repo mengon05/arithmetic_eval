@@ -6,22 +6,19 @@ import (
 	"github.com/mengon05/arithmetic_eval.git/lexer"
 )
 
-func EvalMaster(tokens []*lexer.Token) {
-
-	et := New(tokens)
-	r := et.Eval()
-	fmt.Printf("%v\n", r)
-}
-
 type evalTree struct {
 	tokens   []*lexer.Token
 	position int
+	rparam   int
 }
 
-func (e *evalTree) Eval() int {
-	n := e.exec()
+func (e *evalTree) Eval() (int, error) {
+	n, err := e.exec()
+	if err != nil {
+		return 0, err
+	}
 	r := n.eval()
-	return r
+	return r, nil
 }
 func New(tokens []*lexer.Token) evalTree {
 	return evalTree{
@@ -44,61 +41,81 @@ func (e *evalTree) workingToken() *lexer.Token {
 	}
 	return nil
 }
-func (e *evalTree) exec() *Node {
+func (e *evalTree) exec() (*Node, error) {
 	e.position = 0
 	return e.level1()
 
 }
 
 // plus and minus
-func (e *evalTree) level1() *Node {
-	node := e.level2()
+func (e *evalTree) level1() (*Node, error) {
+	node, err := e.level2()
+	if err != nil {
+		return nil, err
+	}
 	l := e.workingToken()
+
 	for l != nil && (l.Type == '+' || l.Type == '-') {
 		e.next()
 		tmp := &Node{Token: l}
 		tmp.Left = node
 		node = tmp
-		node.Right = e.level2()
+		node.Right, err = e.level2()
+		if err != nil {
+			return nil, err
+		}
 		l = e.workingToken()
 	}
-	return node
+
+	return node, nil
 }
 
 // mult and div
-func (e *evalTree) level2() *Node {
-	node := e.level3()
+func (e *evalTree) level2() (*Node, error) {
+	node, err := e.level3()
+	if err != nil {
+		return nil, err
+	}
 	l := e.workingToken()
+	if l != nil && e.rparam == 0 && l.Type == lexer.TokenTypes.RParentesis {
+		return nil, fmt.Errorf("unexpected character %c", l.Type)
+	}
 	for l != nil && (l.Type == '*' || l.Type == '/') {
 		e.next()
 		tmp := &Node{Token: l}
 		tmp.Left = node
 		node = tmp
-		node.Right = e.level3()
+		node.Right, err = e.level3()
+		if err != nil {
+			return nil, err
+		}
 		l = e.workingToken()
 	}
-	return node
+	return node, nil
 }
-func (e *evalTree) level3() *Node {
+func (e *evalTree) level3() (*Node, error) {
 	wt := e.workingToken()
 	if wt == nil {
-		return nil
+		return nil, nil
 	}
-	fmt.Printf("%c = %s :: val %d\n", wt.Type, string(wt.Type), wt.Value)
 	if wt.Type.IsNumber() {
 		e.next()
-		return &Node{Token: wt}
+		return &Node{Token: wt}, nil
 	} else if wt.Type == lexer.TokenTypes.LParentesis {
 		e.next()
-		l1 := e.level1()
-		n := e.workingToken()
-		if n.Type != lexer.TokenTypes.RParentesis {
-			panic(fmt.Sprintf("missing right parentesis, found %c", n.Type))
+		e.rparam++
+		l1, err := e.level1()
+		if err != nil {
+			return nil, err
 		}
+		n := e.workingToken()
+		if n == nil || n.Type != lexer.TokenTypes.RParentesis {
+			return nil, fmt.Errorf("missing right parentesis")
+		}
+		e.rparam--
 		e.next()
-		return l1
+		return l1, nil
 	} else {
-		fmt.Printf("something wrong %v", wt)
+		return nil, fmt.Errorf("unexpected character %c", wt.Type)
 	}
-	return nil
 }

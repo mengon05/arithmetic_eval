@@ -6,18 +6,16 @@ import (
 	"github.com/mengon05/arithmetic_eval.git/lexer"
 )
 
-func exec(exp string) int {
-	lex := lexer.New()
-	tokens := lex.Tokenize(exp)
-	evaluator := New(tokens)
-	return evaluator.Eval()
-}
-
-func assertExpresion(t *testing.T, exp string, val int) {
-	result := exec(exp)
-	if result != val {
-		t.Errorf("%s excpected to %d, but was %d", exp, val, result)
+func assertError(t *testing.T, exp string, msg string) {
+	_, err := exec(exp)
+	if err == nil {
+		t.Errorf("exp %s does not return error", exp)
+		return
 	}
+	if err.Error() != msg {
+		t.Errorf("Error does not match expected \"%s\", actual \"%s\"", msg, err.Error())
+	}
+
 }
 func TestEval_goodcases(t *testing.T) {
 	assertExpresion(t, "1+1", 2)
@@ -35,4 +33,33 @@ func TestEval_goodcases(t *testing.T) {
 	assertExpresion(t, "2*(3*5)", 30)
 	assertExpresion(t, "((1+1)*((1+2)*(2+3)))", 30)
 	assertExpresion(t, "((1+1)*((1+2)*(2+3)))/10", 3)
+}
+
+func TestEval_error(t *testing.T) {
+	assertError(t, "(1+1", "missing right parentesis")
+	assertError(t, "(1+(1)", "missing right parentesis")
+	assertError(t, ")", "unexpected character )")
+	assertError(t, "1)", "unexpected character )")
+	assertError(t, "(1+1))", "unexpected character )")
+	assertError(t, "(1))+1", "unexpected character )")
+	assertError(t, "()", "unexpected character )")
+	assertError(t, "(()", "unexpected character )")
+	assertError(t, "1+(())", "unexpected character )")
+}
+
+func exec(exp string) (int, error) {
+	lex := lexer.New()
+	tokens := lex.Tokenize(exp)
+	evaluator := New(tokens)
+	return evaluator.Eval()
+}
+
+func assertExpresion(t *testing.T, exp string, val int) {
+	result, err := exec(exp)
+	if err != nil {
+		t.Errorf("Unexpected error evaluating %s: %s", exp, err.Error())
+	}
+	if result != val {
+		t.Errorf("%s expected \"%d\", actual \"%d\"", exp, val, result)
+	}
 }
