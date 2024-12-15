@@ -2,7 +2,6 @@ package lexer
 
 import (
 	"fmt"
-	"math"
 )
 
 type Token struct {
@@ -13,7 +12,7 @@ type Token struct {
 
 func (lt *Token) AddDigit(digit int) {
 
-	r := lt.Value * int(math.Pow10(lt.digits))
+	r := lt.Value * 10
 	lt.Value = r + digit
 	lt.digits++
 }
