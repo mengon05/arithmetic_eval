@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	exp := "(1))+1"
+	exp := "6*(4/2)+1*3"
 	if len(os.Args) > 1 && os.Args[1] != "" {
 		exp = os.Args[1]
 	}
