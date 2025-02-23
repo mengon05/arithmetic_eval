@@ -73,13 +73,16 @@ func (e *evalTree) level1() (*Node, error) {
 // mult and div
 func (e *evalTree) level2() (*Node, error) {
 	node, err := e.level3()
+
 	if err != nil {
 		return nil, err
 	}
 	l := e.workingToken()
+
 	if l != nil && e.rparam == 0 && l.Type == lexer.TokenTypes.RParentesis {
-		return nil, fmt.Errorf("unexpected character %c", l.Type)
+		return nil, fmt.Errorf("unexpected character lvl2 %c", l.Type)
 	}
+
 	for l != nil && (l.Type == '*' || l.Type == '/') {
 		e.next()
 		tmp := &Node{Token: l}
@@ -100,6 +103,7 @@ func (e *evalTree) level3() (*Node, error) {
 	}
 	if wt.Type.IsNumber() {
 		e.next()
+
 		return &Node{Token: wt}, nil
 	} else if wt.Type == lexer.TokenTypes.LParentesis {
 		e.next()
@@ -123,6 +127,6 @@ func (e *evalTree) level3() (*Node, error) {
 		}
 		return &Node{Token: n}, nil
 	} else {
-		return nil, fmt.Errorf("unexpected character %c", wt.Type)
+		return nil, fmt.Errorf("unexpected character %c lvl3", wt.Type)
 	}
 }

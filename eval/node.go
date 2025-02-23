@@ -40,18 +40,27 @@ func (n *Node) eval() (int, error) {
 
 var opMap = map[lexer.TokenType]func(a, b int) (int, error){
 	lexer.TokenTypes.Plus: func(a, b int) (int, error) {
-		return a + b, nil
+		c := a + b
+		fmt.Printf("%d + %d = %d\n", a, b, c)
+		return c, nil
 	},
 	lexer.TokenTypes.Minus: func(a, b int) (int, error) {
-		return a - b, nil
+		c := a - b
+		fmt.Printf("%d - %d = %d\n", a, b, c)
+		return c, nil
 	},
 	lexer.TokenTypes.Mult: func(a, b int) (int, error) {
-		return a * b, nil
+		c := a * b
+		fmt.Printf("%d * %d = %d\n", a, b, c)
+		return c, nil
 	},
 	lexer.TokenTypes.Div: func(a, b int) (int, error) {
 		if b == 0 {
 			return 0, fmt.Errorf("invalid operation: %d divided by %d", a, b)
 		}
-		return a / b, nil
+		c := a / b
+		fmt.Printf("%d / %d = %d\n", a, b, c)
+		return c, nil
+
 	},
 }
