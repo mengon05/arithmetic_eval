@@ -31,6 +31,13 @@ func (l *Lexer) Tokenize(str string) []*Token {
 			continue
 
 		}
+		if r == '(' {
+			if lastToken.Type == ')' {
+				t := newToken(TokenTypes.Mult)
+				lastToken = t
+				tokens = append(tokens, t)
+			}
+		}
 		ltt := TokenType(r)
 		t := ltt.Token()
 		tokens = append(tokens, t)

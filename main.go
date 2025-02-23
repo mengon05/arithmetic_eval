@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	exp := "-10+3"
+	exp := "-10+(3*3)(2+1)+(5-2)"
 	if len(os.Args) > 1 && os.Args[1] != "" {
 		exp = os.Args[1]
 	}
