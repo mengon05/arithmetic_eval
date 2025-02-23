@@ -13,7 +13,7 @@ func assertError(t *testing.T, exp string, msg string) {
 		return
 	}
 	if err.Error() != msg {
-		t.Errorf("Error does not match expected \"%s\", actual \"%s\"", msg, err.Error())
+		t.Errorf("%s Error does not match expected \"%s\", actual \"%s\"", exp, msg, err.Error())
 	}
 
 }
@@ -38,23 +38,23 @@ func TestEval_goodcases(t *testing.T) {
 	assertExpresion(t, "-11-5", -16)
 }
 func TestEval_invalid_expresions(t *testing.T) {
-	assertError(t, "a+b", "unexpected character a")
-	assertError(t, "1+b", "unexpected character b")
+	assertError(t, "a+b", "unexpected character a on level 3")
+	assertError(t, "1+b", "unexpected character b on level 3")
 	assertError(t, "1/0", "invalid operation: 1 divided by 0")
 	assertError(t, "100/(3-3)", "invalid operation: 100 divided by 0")
-	assertError(t, "*1", "unexpected character *")
+	assertError(t, "*1", "unexpected character * on level 3")
 }
 
 func TestEval_parentesis_error(t *testing.T) {
 	assertError(t, "(1+1", "missing right parentesis")
 	assertError(t, "(1+(1)", "missing right parentesis")
-	assertError(t, ")", "unexpected character )")
-	assertError(t, "1)", "unexpected character )")
-	assertError(t, "(1+1))", "unexpected character )")
-	assertError(t, "(1))+1", "unexpected character )")
-	assertError(t, "()", "unexpected character )")
-	assertError(t, "(()", "unexpected character )")
-	assertError(t, "1+(())", "unexpected character )")
+	assertError(t, ")", "unexpected character ) on level 3")
+	assertError(t, "1)", "unexpected character on level2 )")
+	assertError(t, "(1+1))", "unexpected character on level2 )")
+	assertError(t, "(1))+1", "unexpected character on level2 )")
+	assertError(t, "()", "unexpected character ) on level 3")
+	assertError(t, "(()", "unexpected character ) on level 3")
+	assertError(t, "1+(())", "unexpected character ) on level 3")
 }
 
 func exec(exp string) (int, error) {

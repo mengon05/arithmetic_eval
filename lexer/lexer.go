@@ -32,7 +32,7 @@ func (l *Lexer) Tokenize(str string) []*Token {
 
 		}
 		if r == '(' {
-			if lastToken.Type == ')' {
+			if lastToken != nil && lastToken.Type == ')' {
 				t := newToken(TokenTypes.Mult)
 				lastToken = t
 				tokens = append(tokens, t)
